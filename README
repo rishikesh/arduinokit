@@ -1,0 +1,90 @@
+#+TITLE: About Arduino Kit
+#+AUTHOR: Rishi B
+#+DATE: August 22, 2011
+
+* About Arduino Kit
+
+Arduino Kit is a framework that allows your computer to communicate with the Arduino Uno board and its derivatives directly through your OSs serial commutation abilities and the Firmata protocol. You can use this kit as is with the developed GUI for basic input and output processing, or use its components to create a custom application for data processing or device controls.
+
+Essentially, the kit's GUI application can be used to process the analogue inputs from the Arduino, and provide a few directives to the output pins. This output can either be to servos (or any other device that turns on/off) or through PWM control via the board's PWM enabled pins. However, if you wish to extend this application by only taking the communication/IO code from it, that is also another way it can be used.
+
+** Download Arduino Kit
+
+The C++ source for Arduino Kit, released under GPL version 3, is currently available at http://code.google.com/p/arduinokit/. Please note that only the Mac version of the source has been thoroughly tested. Although the Linux and Windows versions should work as of writing this, any future updates to these OS's may break the application. If that's the case, please contact the author.
+
+** Potential Uses for Arduino Kit
+
+Arduino kit can be used for anything that requires some data processing through sensors or
+
+
+** Brief history of how this app came to be
+
+This foundations for this app were built as a Google Summer of Code 2011 project under the guidance of Prof. Bart Massey at Portland State University. As such, this app was/is/will remain free and open source.
+
+* Using the Arduino Kit GUI
+
+Once you compile the application, using the GUI should be pretty straight forward. Essentially you need to:
+1. Choose a sensor (only IR sensors are fully supported for now, but other basic binary sensors like line, light etc. should work fine too)
+2. Choose a output pin (if you need it), and set the PWM options to your liking
+3. Configure an action using the actions part. This allows you to map an input parameter to an output action using either one of the output pins (turning on an LED for example) or opening a file (like a batch script or a shell script).
+
+Note that your board will require StandardFirmata 2.2 loaded on to it (particularly if you use Linux). To find out more visit the Firmata webpage at: http://firmata.org/wiki/Main_Page
+
+* Developing with Arduino Kit
+
+The current version of Arduinokit can be broken down into 3 main areas.
+
+** 1. Serial Communications
+	The code for this can be found in the serial.cpp and serial.h files, and consists of OS relevant code that opens the serial ports, sets the baud rates, and reads/sends the messages. The only time you would ever need to update this part is if an OS changes or updates the way it works with serial ports.
+
+	The only change you will likely have to make here if you intended on using this part is setting the right operating system in the #define statement before you compile the application.
+
+** 2. I/O interfacing with the Arduino Uno board through Firmata
+
+The code for this part can be found in the toolkit.cpp and toolkit.h files, and consists of the Firmata messages sent by the application to get work done. This file will need to be updated whenever Firmata has a newer version, or if anything in the protocol changes. Currently, the I/O parts supports reading the Analogue inputs, turning digital pins on or off, and PWM support for PWM enabled pins on the board. Shift registers and I2C are not supported, even though the protocol supports this.
+
+** 3. The GUI/processing part
+
+This is the part that draws the pretty pictures and is contained in the arduinokit.cpp and arduinokit.h files. It is essentially the wxWidgets code necessary to draw the frames based application, the buttons as well as the button actions (including the processing/variable storage for calibrating sensors).
+
+** Frameworks Used
+In order to develop the GUI part of the application the wxWidgets framework was used. The rationale behind using this system was to allow for supporting multiple operating systems and simplify the development of the GUI as much as possible. You can find more information about wxWidgets here: http://www.wxwidgets.org/
+
+A link that is somewhat important is the wiki (particularly its guide section): http://wiki.wxwidgets.org/Guides_%26_Tutorials
+as it will help you set the parameters necessary to compile the application. I have used XCode version Version 3.2.6 to compile the Mac executable for the application, but in general any compiler capable of using wxWidgets should work fine.
+
+The wxWidgets version used for this application was version 2.8.12. Having a 2.9.2 compiler on your system may or may not work.
+
+For serial communications Firmata version 2.2 was used: http://firmata.org/wiki/Protocol
+
+
+* Extending Arduino Kit
+
+While this plan is still in development, I think a critical component of the application will be to have more a rigorous and feature enabled processing mechanism. I have tried my hand at developing a simple scripting language, but that doesn't work as well. As such I am looking into PureData integration in the future, to add in FlowStone like capabilities to Arduino kit. However, this will likely take place only over the next coming months.
+
+Another important and necessary extension on the roadmap is to add in support for Shift Registers and I2C. The protocol current version of the protocol (version 2.2) does support this, however it there is no support added for this in the toolkit.
+
+
+* FAQ/More Information
+
+If there's a question you'd like to see addressed here, please send me a note and I'll update this part.
+
+** The data read by the application from the sensor is too jittery
+
+As said by my mentor: "What you're probably seeing is "aliasing", where signals of frequency higher than half the sampling rate are coming in the input. What you need is a hardware anti-aliasing filter on the ADC input. This is usually as simple as a resistor and capacitor of appropriate value." So essentially, what you need is a basic RC circuit connected to the sensor. For my particular IR sensor, it was also necessary to stabilize the power input by adding in a RC circuit between Vcc and Gnd.
+
+** When will the next version/update come out
+
+I plan on working on this regularly, and you will likely see monthly updates being pushed to the repository.
+
+
+* Contact Info
+This application was developed by Rishi B. You can contact him using this online form (preferred) at http://arduinokit.wordpress.com/contact/
+
+Or send him an email at: r dot lastname at utoronto dot ca
+
+* Credits
+- Google Summer of Code and Prof. Bart Massey from Portland State University for the help and guidance
+- The Arduino Project and Firmata Project
+- C++ and WxWidgets
+- GNU Emacs/Orgmode for the documentation
